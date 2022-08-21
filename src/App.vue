@@ -1,11 +1,15 @@
 <script>
+import MapView from "./components/MapView.vue";
+export default {
+  name: "App",
+  components: { MapView },
+};
 </script>
 
 <template>
   <main>
-    <RouterView />
+    <MapView />
   </main>
 </template>
 
-<style lang=”scss”>
-</style>
+<style lang="scss"></style>
