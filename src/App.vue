@@ -7,9 +7,14 @@ export default {
 </script>
 
 <template>
-  <main>
+  <main id="mainContainer">
     <MapView />
   </main>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+#mainContainer {
+  max-width: 100vw;
+  height: 100vh;
+}
+</style>
