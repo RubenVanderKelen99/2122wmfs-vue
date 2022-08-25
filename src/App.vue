@@ -1,14 +1,14 @@
 <script>
-import MapView from "./components/MapView.vue";
+import LoginView from "./views/LoginView.vue";
 export default {
   name: "App",
-  components: { MapView },
+  components: { LoginView },
 };
 </script>
 
 <template>
   <main id="mainContainer">
-    <MapView />
+    <LoginView />
   </main>
 </template>
 
