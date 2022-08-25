@@ -42,34 +42,36 @@ export default {
   actions: {
     login({ commit, dispatch }, user) {
       commit("setIsLoading", true);
-      myAxios.get("http://localhost:8080/sanctum/csrf-cookie").then(() => {
-        myAxios
-          .post("http://localhost:8080/login", {
-            email: user.email,
-            password: user.password,
-          })
-          .then(async function () {
-            await dispatch("fetchUser");
-          })
-          .catch(function (error) {
-            if (error.response?.status >= 500) {
-              commit("setError", "Internal server error");
-            }
-            if (error.response?.status > 400) {
-              commit("setError", "Invalid email and/or password");
-            }
-          })
-          .then(function () {
-            commit("setIsLoading", false);
-          });
-      });
+      myAxiosWithCredentials
+        .get("http://localhost:8080/sanctum/csrf-cookie")
+        .then(() => {
+          myAxiosWithCredentials
+            .post("http://localhost:8080/api/login", {
+              email: user.email,
+              password: user.password,
+            })
+            .then(async function () {
+              await dispatch("fetchUser");
+            })
+            .catch(function (error) {
+              if (error.response?.status >= 500) {
+                commit("setError", "Internal server error");
+              }
+              if (error.response?.status > 400) {
+                commit("setError", "Invalid email and/or password");
+              }
+            })
+            .then(function () {
+              commit("setIsLoading", false);
+            });
+        });
     },
     emptyError({ commit }) {
       commit("setError", "");
     },
     async fetchUser({ commit }) {
-      await myAxios
-        .get("/user")
+      await myAxiosWithCredentials
+        .get("http://localhost:8080/api/user")
         .then((response) => {
           let user = response.data;
           commit("setUser", user);

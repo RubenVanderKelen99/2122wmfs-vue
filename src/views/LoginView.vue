@@ -106,7 +106,7 @@ export default {
   },
   watch: {
     authenticated() {
-      this.$router.push({ name: "showGames" });
+      //this.$router.push({ name: "showGames" });
     },
     email() {
       this.emptyError();
