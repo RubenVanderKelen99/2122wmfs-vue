@@ -21,36 +21,54 @@
       map-type-id="terrain"
       style="width: 50vw; height: 50vw"
     >
-      <GMapMarker
-        :key="index"
-        v-for="(m, index) in offerMarkers"
-        :icon="'http://maps.google.com/mapfiles/ms/icons/green-dot.png'"
-        :position="m.position"
-        :editable="false"
-        :draggable="false"
-      />
-      <GMapMarker
-        :key="index"
-        v-for="(m, index) in requestMarkers"
-        :icon="'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'"
-        :position="m.position"
-        :editable="false"
-        :draggable="false"
-      />
+      <div :key="index" v-for="(ride, index) in rides.requested_rides">
+        <GMapMarker
+          :position="{ lat: ride.lat_start, lng: ride.lng_start }"
+          :icon="'http://maps.google.com/mapfiles/ms/icons/blue.png'"
+          :editable="false"
+          :draggable="false"
+        />
+        <GMapMarker
+          :position="{ lat: ride.lat_destination, lng: ride.lng_destination }"
+          :icon="'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'"
+          :editable="false"
+          :draggable="false"
+        />
+      </div>
+      <div :key="index" v-for="(ride, index) in rides.offered_rides">
+        <GMapMarker
+          :position="{ lat: ride.lat_start, lng: ride.lng_start }"
+          :icon="'http://maps.google.com/mapfiles/ms/icons/green.png'"
+          :editable="false"
+          :draggable="false"
+        />
+        <GMapMarker
+          :position="{ lat: ride.lat_destination, lng: ride.lng_destination }"
+          :icon="'http://maps.google.com/mapfiles/ms/icons/green-dot.png'"
+          :editable="false"
+          :draggable="false"
+        />
+      </div>
       <GMapPolyline
         :key="index"
-        v-for="(m, index) in offerPaths"
-        :path="m.path"
+        v-for="(ride, index) in rides.requested_rides"
+        :path="[
+          { lat: ride.lat_start, lng: ride.lng_start },
+          { lat: ride.lat_destination, lng: ride.lng_destination },
+        ]"
         :editable="false"
-        :options="offerOptions"
+        :options="requestOptions"
         ref="polyline"
       />
       <GMapPolyline
         :key="index"
-        v-for="(m, index) in requestPaths"
-        :path="m.path"
+        v-for="(ride, index) in rides.offered_rides"
+        :path="[
+          { lat: ride.lat_start, lng: ride.lng_start },
+          { lat: ride.lat_destination, lng: ride.lng_destination },
+        ]"
         :editable="false"
-        :options="requestOptions"
+        :options="offerOptions"
         ref="polyline"
       />
     </GMapMap>
@@ -58,9 +76,38 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   name: "MapView",
   data() {
+    return {
+      center: { lat: 51.0538286, lng: 3.7250121 },
+      offerOptions: {
+        strokeColor: "LightGreen",
+        strokeWeight: 5,
+      },
+      requestOptions: {
+        strokeColor: "CornflowerBlue",
+        strokeWeight: 5,
+      },
+    };
+  },
+  computed: {
+    ...mapGetters({
+      rides: "rides/rides",
+      isLoading: "rides/isLoading",
+    }),
+  },
+  methods: {
+    ...mapActions({
+      fetchRides: "rides/fetchRides",
+    }),
+  },
+  created() {
+    this.fetchRides();
+  },
+  /*data() {
     return {
       center: { lat: 51.0538286, lng: 3.7250121 },
       offerOptions: {
@@ -77,12 +124,14 @@ export default {
             lat: 51.0538286,
             lng: 3.7250121,
           },
+          icon: "http://maps.google.com/mapfiles/ms/icons/green.png",
         },
         {
           position: {
             lat: 51.07,
             lng: 3.7350121,
           },
+          icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
         },
       ],
       requestMarkers: [
@@ -91,12 +140,14 @@ export default {
             lat: 51.0838286,
             lng: 3.7250121,
           },
+          icon: "http://maps.google.com/mapfiles/ms/icons/blue.png",
         },
         {
           position: {
             lat: 51.09,
             lng: 3.7350121,
           },
+          icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
         },
       ],
       offerPaths: [
@@ -116,7 +167,7 @@ export default {
         },
       ],
     };
-  },
+  },*/
 };
 </script>
 
