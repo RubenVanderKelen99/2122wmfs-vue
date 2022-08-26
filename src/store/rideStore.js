@@ -56,18 +56,22 @@ export default {
   actions: {
     async fetchRides({ commit }) {
       commit("setIsLoading", true);
-      await myAxios
-        .get("http://localhost:8080/api/rides")
-        .then((response) => {
-          console.log(response.data);
-          let rides = response.data.data;
-          commit("setRides", rides);
-        })
-        .catch((error) => {
-          console.error(error);
-        })
-        .then(function () {
-          commit("setIsLoading", false);
+      await myAxiosWithCredentials
+        .get("http://localhost:8080/sanctum/csrf-cookie")
+        .then(() => {
+          myAxiosWithCredentials
+            .get("http://localhost:8080/api/rides")
+            .then((response) => {
+              console.log(response.data);
+              let rides = response.data.data;
+              commit("setRides", rides);
+            })
+            .catch((error) => {
+              console.error(error);
+            })
+            .then(function () {
+              commit("setIsLoading", false);
+            });
         });
     },
     async createRide({ commit, dispatch }, data) {
