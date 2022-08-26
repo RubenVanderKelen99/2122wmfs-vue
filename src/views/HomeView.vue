@@ -6,7 +6,9 @@
       :center="center"
       :zoom="12"
       map-type-id="terrain"
-      style="width: 50vw; height: 50vw"
+      style="width: 50vw; height: 35vw"
+      @clickable="true"
+      @click="mark"
     >
       <div :key="index" v-for="(ride, index) in rides.requested_rides">
         <GMapMarker

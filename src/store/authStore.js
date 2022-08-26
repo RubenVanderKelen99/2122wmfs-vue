@@ -1,4 +1,3 @@
-import myAxios from "../../myAxios";
 import myAxiosWithCredentials from "../../myAxiosWithCredentials";
 
 export default {

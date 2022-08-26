@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@fawmi/vue-google-maps": "^0.9.72",
+    "@vuepic/vue-datepicker": "^3.4.6",
     "axios": "^0.27.2",
+    "moment": "^2.29.4",
     "sass": "^1.54.5",
     "vue": "^3.2.37",
     "vue-router": "^4.1.3",

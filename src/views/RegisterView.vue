@@ -1,6 +1,6 @@
 <template>
-  <div class="auth">
-    <NavHeader :authenticated="authenticated"></NavHeader>
+  <NavHeader :authenticated="authenticated"></NavHeader>
+  <div class="auth-container">
     <div class="auth-form">
       <h2>Registration</h2>
       <form class="login-form" method="post">
@@ -138,4 +138,11 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+</style>
