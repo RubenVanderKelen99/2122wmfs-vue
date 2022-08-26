@@ -81,5 +81,54 @@ export default {
           console.error(error);
         });
     },
+    async register({ commit, dispatch }, user) {
+      commit("setIsLoading", true);
+      await myAxiosWithCredentials
+        .get("http://localhost:8080/sanctum/csrf-cookie")
+        .then(() => {
+          myAxiosWithCredentials
+            .post("http://localhost:8080/api/register", {
+              name: user.name,
+              email: user.email,
+              password: user.password,
+              password_confirmation: user.password_confirmation,
+              role: "user",
+            })
+            .then(async function () {
+              await dispatch("fetchUser");
+            })
+            .catch(function (error) {
+              if (error.response?.status >= 500) {
+                commit("setError", "Internal server error");
+              }
+              if (error.response?.status > 400) {
+                commit("setError", "Email is invalid or already in use");
+              }
+            })
+            .then(function () {
+              commit("setIsLoading", false);
+            });
+        });
+    },
+    logout({ commit }) {
+      commit("setIsLoading", true);
+
+      if (document.cookie.indexOf("XSRF-TOKEN") === -1) {
+        return;
+      }
+
+      return myAxiosWithCredentials
+        .post("http://localhost:8080/api/logout")
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          document.cookie =
+            "XSRF-TOKEN=;path=/;expires=Thu, 01 Jan 1970 00:00:00 UTC;Secure;";
+          commit("setUser", {});
+          commit("setAuthenticated", false);
+          commit("setIsLoading", false);
+        });
+    },
   },
 };

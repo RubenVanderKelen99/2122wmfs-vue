@@ -1,10 +1,18 @@
 <template>
   <div class="auth">
     <NavHeader :authenticated="authenticated"></NavHeader>
-    <div class="auth-from">
-      <h2>Login</h2>
+    <div class="auth-form">
+      <h2>Registration</h2>
       <form class="login-form" method="post">
         <p v-for="(error, index) in errors" :key="index">{{ error }}</p>
+        <simple-input
+          id="name"
+          label="Name"
+          type="text"
+          required
+          v-model.trim="name"
+        />
+
         <simple-input
           id="email"
           label="Email"
@@ -23,16 +31,25 @@
           v-model.trim="password"
         />
 
+        <simple-input
+          id="password-repeat"
+          label="Repeat password"
+          type="password"
+          required
+          autocomplete="new-password"
+          v-model.trim="repeatPassword"
+        />
+
         <simple-button
           type="submit"
-          title="Login"
-          :click="tryLogin"
+          title="Registreren"
+          :click="signUp"
           :disabled="isLoading"
         />
 
         <p class="no-profile">
-          No profile yet?
-          <router-link to="/register" class="link">Register here</router-link>
+          Already registered?
+          <router-link to="/login" class="link">Go to login</router-link>
         </p>
       </form>
     </div>
@@ -41,16 +58,18 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import SimpleInput from "../components/atoms/SimpleInput.vue";
-import SimpleButton from "../components/atoms/SimpleButton.vue";
 import NavHeader from "../components/organisms/NavHeader.vue";
+import SimpleButton from "../components/atoms/SimpleButton.vue";
+import SimpleInput from "../components/atoms/SimpleInput.vue";
 
 export default {
-  components: { NavHeader, SimpleInput, SimpleButton },
+  components: { SimpleInput, SimpleButton, NavHeader },
   data() {
     return {
+      name: "",
       email: "",
       password: "",
+      repeatPassword: "",
       submitted: false,
     };
   },
@@ -59,6 +78,8 @@ export default {
       if (!this.submitted) return;
 
       let errors = [];
+
+      if (!this.name) errors.push("Name is required");
 
       let emailRegex =
         /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
@@ -71,6 +92,9 @@ export default {
       }
 
       if (!this.password) errors.push("Password is required");
+      else if (this.password !== this.repeatPassword) {
+        errors.push("Passwords do not match");
+      }
 
       if (this.error) errors.push(this.error);
 
@@ -84,16 +108,18 @@ export default {
   },
   methods: {
     ...mapActions({
-      login: "auth/login",
+      register: "auth/register",
       emptyError: "auth/emptyError",
     }),
-    async tryLogin() {
+    async signUp() {
       this.submitted = true;
 
       if (this.errors.length === 0) {
-        await this.login({
+        await this.register({
+          name: this.name,
           email: this.email,
           password: this.password,
+          password_confirmation: this.repeatPassword,
         });
       }
     },
@@ -103,9 +129,6 @@ export default {
       this.$router.push({ name: "home" });
     },
     email() {
-      this.emptyError();
-    },
-    password() {
       this.emptyError();
     },
   },

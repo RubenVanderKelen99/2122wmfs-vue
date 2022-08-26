@@ -1,20 +1,16 @@
-<script>
-import LoginView from "./views/LoginView.vue";
-export default {
-  name: "App",
-  components: { LoginView },
-};
-</script>
-
 <template>
   <main id="mainContainer">
-    <LoginView />
+    <RouterView />
   </main>
 </template>
 
+<script>
+export default {};
+</script>
+
 <style lang="scss">
-#mainContainer {
+/*#mainContainer {
   max-width: 100vw;
   height: 100vh;
-}
+}*/
 </style>
