@@ -12,7 +12,7 @@ app.use(router);
 app
   .use(VueGoogleMaps, {
     load: {
-      key: ***REMOVED***,
+      key: "***REMOVED***",
     },
   })
   .mount("#app");

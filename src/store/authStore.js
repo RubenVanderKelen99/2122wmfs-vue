@@ -41,36 +41,34 @@ export default {
   actions: {
     login({ commit, dispatch }, user) {
       commit("setIsLoading", true);
-      myAxiosWithCredentials
-        .get("http://localhost:8080/sanctum/csrf-cookie")
-        .then(() => {
-          myAxiosWithCredentials
-            .post("http://localhost:8080/api/login", {
-              email: user.email,
-              password: user.password,
-            })
-            .then(async function () {
-              await dispatch("fetchUser");
-            })
-            .catch(function (error) {
-              if (error.response?.status >= 500) {
-                commit("setError", "Internal server error");
-              }
-              if (error.response?.status > 400) {
-                commit("setError", "Invalid email and/or password");
-              }
-            })
-            .then(function () {
-              commit("setIsLoading", false);
-            });
-        });
+      myAxiosWithCredentials.get("../sanctum/csrf-cookie").then(() => {
+        myAxiosWithCredentials
+          .post("api/login", {
+            email: user.email,
+            password: user.password,
+          })
+          .then(async function () {
+            await dispatch("fetchUser");
+          })
+          .catch(function (error) {
+            if (error.response?.status >= 500) {
+              commit("setError", "Internal server error");
+            }
+            if (error.response?.status > 400) {
+              commit("setError", "Invalid email and/or password");
+            }
+          })
+          .then(function () {
+            commit("setIsLoading", false);
+          });
+      });
     },
     emptyError({ commit }) {
       commit("setError", "");
     },
     async fetchUser({ commit }) {
       await myAxiosWithCredentials
-        .get("http://localhost:8080/api/user")
+        .get("api/user")
         .then((response) => {
           let user = response.data;
           commit("setUser", user);
@@ -82,32 +80,30 @@ export default {
     },
     async register({ commit, dispatch }, user) {
       commit("setIsLoading", true);
-      await myAxiosWithCredentials
-        .get("http://localhost:8080/sanctum/csrf-cookie")
-        .then(() => {
-          myAxiosWithCredentials
-            .post("http://localhost:8080/api/register", {
-              name: user.name,
-              email: user.email,
-              password: user.password,
-              password_confirmation: user.password_confirmation,
-              role: "user",
-            })
-            .then(async function () {
-              await dispatch("fetchUser");
-            })
-            .catch(function (error) {
-              if (error.response?.status >= 500) {
-                commit("setError", "Internal server error");
-              }
-              if (error.response?.status > 400) {
-                commit("setError", "Email is invalid or already in use");
-              }
-            })
-            .then(function () {
-              commit("setIsLoading", false);
-            });
-        });
+      await myAxiosWithCredentials.get("../sanctum/csrf-cookie").then(() => {
+        myAxiosWithCredentials
+          .post("api/register", {
+            name: user.name,
+            email: user.email,
+            password: user.password,
+            password_confirmation: user.password_confirmation,
+            role: "user",
+          })
+          .then(async function () {
+            await dispatch("fetchUser");
+          })
+          .catch(function (error) {
+            if (error.response?.status >= 500) {
+              commit("setError", "Internal server error");
+            }
+            if (error.response?.status > 400) {
+              commit("setError", "Email is invalid or already in use");
+            }
+          })
+          .then(function () {
+            commit("setIsLoading", false);
+          });
+      });
     },
     logout({ commit }) {
       commit("setIsLoading", true);
@@ -117,7 +113,7 @@ export default {
       }
 
       return myAxiosWithCredentials
-        .post("http://localhost:8080/api/logout")
+        .post("api/logout")
         .catch((error) => {
           console.error(error);
         })
